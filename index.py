@@ -8,31 +8,22 @@ def clear_console():
 print("Welcome to blackjack!")
 player_name = input("What's your name player? \n")
 print("Ok {name}, here are the instructions:".format(name=player_name))
-input("Press Enter to continue...")
-clear_console()
 print("You will have 100 chips and the house will have 500 chips.")
 input("Press Enter to continue...")
 clear_console()
 print("I will give you 2 cards, and you will be able to see one of my cards.")
-input("Press Enter to continue...")
-clear_console()
 print("Cards 2 to 10 has the same value as the number in the card.")
-input("Press Enter to continue...")
-clear_console()
 print("J, Q and K cards have a value of ten, and A has a value of 1 or 11 (depending of your convenience).")
 input("Press Enter to continue...")
 clear_console()
 print("If you have both of your cards with the same value (for example K and K)")
-input("Press Enter to continue...")
-clear_console()
 print("You will be able to split your hand, so you can play with both hands,")
-input("Press Enter to continue...")
-clear_console()
 print("however, you will have to pay double for double chances of winning.")
 input("Press Enter to continue...")
 clear_console()
 print("Your goal is to get closer to 21, you can ask for more cards")
 print("but if you have more than 21, you loose!")
+clear_console()
 
 response = ""
 
@@ -62,6 +53,18 @@ class Game:
     card_1 = random.choice(playing_cards_list)
     card_2 = random.choice(playing_cards_list)
     self.house_hand = [card_1, card_2]
+    print("The house is showing a " + self.house_hand[0] + "card")
+
+  def describe_game(self):
+    print("Current house hand is: ")
+    total = 0
+    for card in self.house_hand:
+      print(card)
+      total += playing_cards[card]
+    print("Total is: " + str(total))
+
+  def stay(self):
+    pass
 
 
 class Player:
@@ -69,6 +72,8 @@ class Player:
   balance = 100
   current_bet = 0
   current_hand = []
+  current_round = 0
+  splitted_hand = False
 
   def bet(self):
     while True:
@@ -90,7 +95,41 @@ class Player:
     card_2 = random.choice(playing_cards_list)
     self.current_hand = [card_1, card_2]
 
+  def prompt_player(self, game):
+    print("What would you like to do next?")
+    if self.current_round == 0 and (self.current_hand[0] == self.current_hand[1]):
+      choice = input("""
+      1. Ask another card
+      2. Stay with this hand
+      3. Split hand
+      0. Exit
+      """)
+    else:
+      choice = input("""
+      1. Ask another card
+      2. Stay with this hand
+      0. Exit
+      """)
+
+      if choice == "1":
+        card = random.choice(playing_cards_list)
+        self.current_hand.append(card)
+        self.describe_game()
+
+      elif choice == "2":
+        game.stay()
+    
+      elif choice == "3":
+        pass
+      
+      elif choice == "0":
+        print("Your balance was: " + str(self.balance))
+        print("Goodbye!")
+      
+    
+
   def describe_game(self):
+    clear_console()
     total = 0
     for card in self.current_hand:
       if card == "A":
@@ -103,16 +142,28 @@ class Player:
       
       print("You have a " + card + " card")
     
-    print("Total of your hand is: " + str(total))
+    print("Total of your hand is: " + str(total) + "chips")
+    return total
+  
+  def stay(self, game):
+    self.describe_game()
+
+  
+  def round_check(self, game):
+    total = self.describe_game()
+    if total > 21:
+      print("You loose this round!")
+    else:
+      self.prompt_player(game)
+
 
 
 
   def win_a_game(self):
     self.balance += self.current_bet * 2
 
-
+game_1 = Game()
 player_1 = Player()
 player_1.bet()
 player_1.play_a_game()
-print(player_1.current_hand)
-player_1.describe_game()
+player_1.round_check(game_1)
