@@ -1,4 +1,5 @@
 import os
+import random
 
 def clear_console():
     # Clear the console
@@ -37,7 +38,6 @@ response = ""
 
 playing_cards = {
   "A" : [1, 11],
-  "1": 1,
   "2": 2,
   "3": 3,
   "4": 4,
@@ -49,8 +49,10 @@ playing_cards = {
   "10": 10,
   "J": 10,
   "Q": 10,
-  "JK": 10,
+  "K": 10,
 }
+
+playing_cards_list = ["A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K"]
 
 class Player:
   name = player_name
@@ -63,11 +65,14 @@ class Player:
     self.balance -= amount
 
   def play_a_game(self):
-    self.current_hand = []
+    card_1 = random.choice(playing_cards_list)
+    card_2 = random.choice(playing_cards_list)
+    self.current_hand = [card_1, card_2]
 
   def win_a_game(self):
     self.balance += self.current_bet * 2
 
 
-while response != "stop":
-  response = input("Say something... ")
+player_1 = Player()
+player_1.play_a_game()
+print(player_1.current_hand)
