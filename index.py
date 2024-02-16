@@ -55,17 +55,26 @@ class Game:
     card_1 = random.choice(playing_cards_list)
     card_2 = random.choice(playing_cards_list)
     self.house_hand = [card_1, card_2]
-    print("The house is showing a " + self.house_hand[0] + "card")
+    self.show_card
+    
 
   def describe_game(self):
     self.start_game()
     print("Current house hand is: ")
     for card in self.house_hand:
       print(card + " card.")
-      self.total += playing_cards[card]
+      if "A" in self.house_hand:
+        if total + 11 > 21:
+          total += 1
+        else:
+          total += 11
+      else:  
+        self.total += playing_cards[card]
     print("Total is: " + str(self.total))
 
   def pick_card(self):
+    self.house_hand.append(random.choice(playing_cards))
+    self.describe_game()
     if self.total == 21:
       print("The house got 21! You loose")
     if self.total >= 17:
@@ -80,12 +89,17 @@ class Game:
       print("You loose!")
       print("House total: {total}".format(total=self.total))
       print("Your total: {total}".format(total=player.total))
+      player.loose_a_game()
     else:
       print("You win!")
       print("House total: {total}".format(total=self.total))
       print("Your total: {total}".format(total=player.total))
+      player.win_a_game()
 
     self.total = 0
+
+  def show_card(self):
+    print("The house is showing a " + self.house_hand[0] + " card")
 
 
 class Player:
@@ -112,7 +126,8 @@ class Player:
     print("If you loose this game your balance will be: {balance}".format(balance = self.balance))
     
 
-  def play_a_game(self):
+  def play_a_game(self, game):
+    game.start_game()
     card_1 = random.choice(playing_cards_list)
     card_2 = random.choice(playing_cards_list)
     self.current_hand = [card_1, card_2]
@@ -120,6 +135,7 @@ class Player:
   def prompt_player(self, game):
     choice = ""
     while self.total < 21 and choice != "0":
+      game.show_card()
       print("What would you like to do next?")
       if self.current_round == 0 and (self.current_hand[0] == self.current_hand[1]):
         choice = input("""
@@ -144,7 +160,7 @@ class Player:
           game.stay()
       
         elif choice == "3":
-          pass
+          self.splitted_hand = True
         
         elif choice == "0":
           print("Your balance was: " + str(self.balance))
@@ -225,5 +241,5 @@ class Player:
 game_1 = Game()
 player_1 = Player()
 player_1.bet()
-player_1.play_a_game()
+player_1.play_a_game(game_1)
 player_1.round_check(game_1)
