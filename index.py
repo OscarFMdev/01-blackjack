@@ -119,7 +119,6 @@ class Player:
   def prompt_player(self, game):
     choice = ""
     while self.total < 21 and choice != "0":
-      print("TOTAL:::::::::::::::::::::::::::::::::::::::::: " + str(self.total))
       print("What would you like to do next?")
       if self.current_round == 0 and (self.current_hand[0] == self.current_hand[1]):
         choice = input("""
@@ -149,6 +148,12 @@ class Player:
         elif choice == "0":
           print("Your balance was: " + str(self.balance))
           print("Goodbye!")
+      
+      if self.total > 21:
+        print("You loose this round")
+        
+      if self.total == 21:
+        print("You win this round")
       
     
 
