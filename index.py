@@ -35,6 +35,23 @@ print("but if you have more than 21, you loose!")
 
 response = ""
 
+playing_cards = {
+  "A" : [1, 11],
+  "1": 1,
+  "2": 2,
+  "3": 3,
+  "4": 4,
+  "5": 5,
+  "6": 6,
+  "7": 7,
+  "8": 8,
+  "9": 9,
+  "10": 10,
+  "J": 10,
+  "Q": 10,
+  "JK": 10,
+}
+
 class Player:
   name = player_name
   balance = 100
