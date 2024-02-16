@@ -59,42 +59,47 @@ class Game:
     
 
   def describe_game(self):
+    clear_console()
+    self.total = 0
     self.start_game()
     print("Current house hand is: ")
     for card in self.house_hand:
       print(card + " card.")
       if "A" in self.house_hand:
-        if total + 11 > 21:
-          total += 1
+        if self.total + 11 > 21:
+          self.total += 1
         else:
-          total += 11
+          self.total += 11
       else:  
         self.total += playing_cards[card]
     print("Total is: " + str(self.total))
 
-  def pick_card(self):
-    self.house_hand.append(random.choice(playing_cards))
+  def pick_card(self, player):
+    random_card = random.choice(playing_cards_list)
+    self.house_hand.append(random_card)
     self.describe_game()
     if self.total == 21:
-      print("The house got 21! You loose")
+        print("The house got 21! You loose")
     if self.total >= 17:
-      self.end_game()
+        self.end_game(player)
 
 
-  def stay(self):
+  def stay(self, player):
     self.describe_game()
+    while self.total < 17:
+      self.pick_card(player)
 
   def end_game(self, player):
     if player.total <= self.total:
       print("You loose!")
       print("House total: {total}".format(total=self.total))
       print("Your total: {total}".format(total=player.total))
-      player.loose_a_game()
+      player.loose_a_game(self)
     else:
       print("You win!")
       print("House total: {total}".format(total=self.total))
       print("Your total: {total}".format(total=player.total))
-      player.win_a_game()
+      player.win_a_game(self)
 
     self.total = 0
 
@@ -131,6 +136,10 @@ class Player:
     card_1 = random.choice(playing_cards_list)
     card_2 = random.choice(playing_cards_list)
     self.current_hand = [card_1, card_2]
+    face_cards = {"K", "Q", "J", "10"}
+    if "A" in self.current_hand and face_cards.intersection(set(self.current_hand)):
+        self.win_a_game(game)
+        print("You have blackjack!")
 
   def prompt_player(self, game):
     choice = ""
@@ -157,7 +166,7 @@ class Player:
           self.describe_game()
 
         elif choice == "2":
-          game.stay()
+          game.stay(self)
       
         elif choice == "3":
           self.splitted_hand = True
@@ -212,8 +221,8 @@ class Player:
     print("House balance is: " + str(game.house_balance) + " chips.")
     if game.house_balance > 0:
       self.bet()
-      self.play_a_game()
-      self.round_check(game_1)
+      self.play_a_game(game)
+      self.round_check(game)
     else:
       self.victory()
 
@@ -224,7 +233,7 @@ class Player:
     print("House balance is: " + str(game.house_balance) + " chips.")
     if self.balance > 0:
       self.bet()
-      self.play_a_game()
+      self.play_a_game(game)
       self.round_check(game_1)
     else:
       self.defeat()
