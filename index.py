@@ -4,7 +4,6 @@ def clear_console():
     # Clear the console
     os.system('cls' if os.name == 'nt' else 'clear')
 
-
 print("Welcome to blackjack!")
 player_name = input("What's your name player? \n")
 print("Ok {name}, here are the instructions:".format(name=player_name))
@@ -35,6 +34,23 @@ print("Your goal is to get closer to 21, you can ask for more cards")
 print("but if you have more than 21, you loose!")
 
 response = ""
+
+class Player:
+  name = player_name
+  balance = 100
+  current_bet = 0
+  current_hand = []
+
+  def bet(self, amount):
+    self.current_bet = amount
+    self.balance -= amount
+
+  def play_a_game(self):
+    self.current_hand = []
+
+  def win_a_game(self):
+    self.balance += self.current_bet * 2
+
 
 while response != "stop":
   response = input("Say something... ")
