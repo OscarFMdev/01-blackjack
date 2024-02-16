@@ -5,22 +5,23 @@ def clear_console():
     # Clear the console
     os.system('cls' if os.name == 'nt' else 'clear')
 
+def enter_continue():
+  input("Press Enter to continue...")
+  clear_console()
+
 print("Welcome to blackjack!")
 player_name = input("What's your name player? \n")
 print("Ok {name}, here are the instructions:".format(name=player_name))
 print("You will have 100 chips and the house will have 500 chips.")
-input("Press Enter to continue...")
-clear_console()
+enter_continue()
 print("I will give you 2 cards, and you will be able to see one of my cards.")
 print("Cards 2 to 10 has the same value as the number in the card.")
 print("J, Q and K cards have a value of ten, and A has a value of 1 or 11 (depending of your convenience).")
-input("Press Enter to continue...")
-clear_console()
+enter_continue()
 print("If you have both of your cards with the same value (for example K and K)")
 print("You will be able to split your hand, so you can play with both hands,")
 print("however, you will have to pay double for double chances of winning.")
-input("Press Enter to continue...")
-clear_console()
+enter_continue()
 print("Your goal is to get closer to 21, you can ask for more cards")
 print("but if you have more than 21, you loose!")
 clear_console()
@@ -151,9 +152,11 @@ class Player:
       
       if self.total > 21:
         print("You loose this round")
-        
+        self.loose_a_game(game)
+
       if self.total == 21:
         print("You win this round")
+        self.win_a_game(game)
       
     
 
@@ -185,12 +188,39 @@ class Player:
     else:
       self.prompt_player(game)
 
-  def win_a_game(self):
+  def win_a_game(self, game):
+    enter_continue()
     self.balance += self.current_bet * 2
-    print("You win, your new balance is: " + str(self.balance) + " chips")
+    game.house_balance -= self.current_bet
+    print("You win, your new balance is: " + str(self.balance) + " chips.")
+    print("House balance is: " + str(game.house_balance) + " chips.")
+    if game.house_balance > 0:
+      self.bet()
+      self.play_a_game()
+      self.round_check(game_1)
+    else:
+      self.victory()
 
-  def loose_a_game(self):
-    print("You loose, your balance is: " + str(self.balance) + " chips")
+  def loose_a_game(self, game):
+    enter_continue()
+    game.house_balance += self.current_bet
+    print("You loose, your balance is: " + str(self.balance) + " chips.")
+    print("House balance is: " + str(game.house_balance) + " chips.")
+    if self.balance > 0:
+      self.bet()
+      self.play_a_game()
+      self.round_check(game_1)
+    else:
+      self.defeat()
+
+  def victory(self):
+    print("Very well played!")
+    print("You have defeated the house (even when the House always wins...)")
+    print("Your balance is: {balance}".format(balance=self.balance))
+
+  def defeat(self):
+    print("You have been defeated by the house!")
+    print("Try again!")
 
 game_1 = Game()
 player_1 = Player()
