@@ -83,7 +83,7 @@ class Game:
     if self.total == 21:
         print("The house got 21! You loose")
     if self.total >= 17:
-        self.end_game(player)
+        self.end_round(player)
 
 
   def stay(self, player):
@@ -91,25 +91,22 @@ class Game:
     while self.total < 17:
       self.pick_card(player)
 
-  def end_game(self, player):
+  def end_round(self, player):
     if player.total <= self.total:
       print("You loose!")
       print("House total: {total}".format(total=self.total))
       print("Your total: {total}".format(total=player.total))
-      player.loose_a_game(self)
+      player.loose_a_round(self)
     else:
       print("You win!")
       print("House total: {total}".format(total=self.total))
       print("Your total: {total}".format(total=player.total))
-      player.win_a_game(self)
+      player.win_a_round(self)
 
     self.total = 0
 
   def show_card(self):
     print("The house is showing a " + self.house_hand[0] + " card")
-
-  def end_game(self):
-    exit()
 
 
 
@@ -142,10 +139,14 @@ class Player:
     card_1 = random.choice(playing_cards_list)
     card_2 = random.choice(playing_cards_list)
     self.current_hand = [card_1, card_2]
+    if self.blackjack(game):
+      self.win_a_round(game)
+
+  def blackjack(self, game):
     face_cards = {"K", "Q", "J", "10"}
     if "A" in self.current_hand and face_cards.intersection(set(self.current_hand)):
-        self.win_a_game(game)
-        print("You have blackjack!")
+      return True
+
 
   def prompt_player(self, game):
     choice = ""
@@ -183,11 +184,11 @@ class Player:
       
       if self.total > 21:
         print("You loose this round")
-        self.loose_a_game(game)
+        self.loose_a_round(game)
 
       if self.total == 21:
         print("You win this round")
-        self.win_a_game(game)
+        self.win_a_round(game)
       
     
 
@@ -219,10 +220,12 @@ class Player:
     else:
       self.prompt_player(game)
 
-  def win_a_game(self, game):
+  def win_a_round(self, game):
     enter_continue()
     self.balance += self.current_bet * 2
     game.house_balance -= self.current_bet
+    if self.blackjack(game):
+      print("{card1} and {card2} YOU HAVE BLACKJACK!!!".format(card1=self.current_hand[0], card2=self.current_hand[1]))
     print("You win, your new balance is: " + str(self.balance) + " chips.")
     print("House balance is: " + str(game.house_balance) + " chips.")
     if game.house_balance > 0:
@@ -232,7 +235,7 @@ class Player:
     else:
       self.victory()
 
-  def loose_a_game(self, game):
+  def loose_a_round(self, game):
     enter_continue()
     game.house_balance += self.current_bet
     print("You loose, your balance is: " + str(self.balance) + " chips.")
@@ -248,10 +251,13 @@ class Player:
     print("Very well played!")
     print("You have defeated the house (even when the House always wins...)")
     print("Your balance is: {balance}".format(balance=self.balance))
+    print("Goodbye!")
+    exit()
 
   def defeat(self):
     print("You have been defeated by the house!")
     print("Try again!")
+    exit()
 
 game_1 = Game()
 player_1 = Player()
