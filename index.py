@@ -11,6 +11,8 @@ def enter_continue():
 
 print("Welcome to blackjack!")
 player_name = input("What's your name player? \n")
+if player_name == "":
+  player_name = "Stranger"
 print("Ok {name}, here are the instructions:".format(name=player_name))
 print("You will have 100 chips and the house will have 500 chips.")
 enter_continue()
@@ -105,6 +107,10 @@ class Game:
 
   def show_card(self):
     print("The house is showing a " + self.house_hand[0] + " card")
+
+  def end_game(self):
+    exit()
+
 
 
 class Player:
