@@ -47,15 +47,25 @@ playing_cards = {
 }
 
 playing_cards_list = ["A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K"]
+# This will create a deck of 52 cards
+cards_array = playing_cards_list * 4
 
+def pick_a_card():
+    if cards_array:
+        card = random.choice(cards_array)
+        cards_array.remove(card)
+        print("Picked card:", card)
+    else:
+        print("No cards left in the deck.")
+    return card
 class Game:
   house_hand = []
   house_balance = 500
   total = 0
 
   def start_game(self):
-    card_1 = random.choice(playing_cards_list)
-    card_2 = random.choice(playing_cards_list)
+    card_1 = pick_a_card()
+    card_2 = pick_a_card()
     self.house_hand = [card_1, card_2]
     self.show_card
     
@@ -108,8 +118,6 @@ class Game:
   def show_card(self):
     print("The house is showing a " + self.house_hand[0] + " card")
 
-
-
 class Player:
   name = player_name
   balance = 100
@@ -136,8 +144,8 @@ class Player:
 
   def play_a_game(self, game):
     game.start_game()
-    card_1 = random.choice(playing_cards_list)
-    card_2 = random.choice(playing_cards_list)
+    card_1 = pick_a_card()
+    card_2 = pick_a_card()
     self.current_hand = [card_1, card_2]
     if self.blackjack(game):
       self.win_a_round(game)
@@ -146,7 +154,6 @@ class Player:
     face_cards = {"K", "Q", "J", "10"}
     if "A" in self.current_hand and face_cards.intersection(set(self.current_hand)):
       return True
-
 
   def prompt_player(self, game):
     choice = ""
@@ -167,20 +174,21 @@ class Player:
         0. Exit
         """)
 
-        if choice == "1":
-          card = random.choice(playing_cards_list)
-          self.current_hand.append(card)
-          self.describe_game()
+      if choice == "1":
+        card = random.choice(playing_cards_list)
+        self.current_hand.append(card)
+        self.describe_game()
 
-        elif choice == "2":
-          game.stay(self)
+      elif choice == "2":
+        game.stay(self)
+    
+      elif choice == "3":
+        self.split_hand_game()
+        self.splitted_hand = True
       
-        elif choice == "3":
-          self.splitted_hand = True
-        
-        elif choice == "0":
-          print("Your balance was: " + str(self.balance))
-          print("Goodbye!")
+      elif choice == "0":
+        print("Your balance was: " + str(self.balance))
+        print("Goodbye!")
       
       if self.total > 21:
         print("You loose this round")
@@ -259,8 +267,28 @@ class Player:
     print("Try again!")
     exit()
 
+  def can_split_hand_check(self):
+    return (self.balance - self.current_bet) >= 0
+
+  def split_hand_game(self):
+    if not self.can_split_hand_check():
+      print("You can't split your hand, not enough chips")
+    else:
+      print("You decided to split your hand")
+      print("You will get 2 hands")
+      print("Let's start your first game:")
+      print("Your first card is {card}".format(card=self.current_hand[0]))
+      print("You receive a {card}".format(card = random.choice(playing_cards_list)))
+      print("Your second card is {card}".format(card=self.current_hand[1]))
+      print("You receive a {card}".format(card = random.choice(playing_cards_list)))
+
+    
+
+
+
 game_1 = Game()
 player_1 = Player()
+
 player_1.bet()
 player_1.play_a_game(game_1)
 player_1.round_check(game_1)
